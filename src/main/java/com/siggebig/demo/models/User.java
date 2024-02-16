@@ -18,6 +18,9 @@ public class User {
     private Long id;
 
     private String username;
+
+    // set so only one, cant remember the annotation on flight
+    private String email;
     private String password;
 
     @ManyToMany
