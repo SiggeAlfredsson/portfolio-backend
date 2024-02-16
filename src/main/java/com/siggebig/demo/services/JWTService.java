@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.siggebig.demo.exceptions.UnauthorizedException;
 import com.siggebig.demo.models.LoginDto;
 import com.siggebig.demo.models.User;
 import com.siggebig.demo.repositorys.UserRepository;
@@ -29,7 +30,7 @@ public class JWTService {
                     .withClaim("email", loginDto.getEmail())
                     .sign(Algorithm.HMAC256("hellofriend"));
         } else {
-            return null;
+            throw new UnauthorizedException("User not found from token");
         }
 
     }
@@ -49,7 +50,7 @@ public class JWTService {
         User user = userRepository.findByEmail(email);
 
         if(user == null) {
-//            throw new UnautorizedException("User not found from token");
+            throw new UnauthorizedException("User not found from token");
         }
 
         return user;
