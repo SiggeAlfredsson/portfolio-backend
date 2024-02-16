@@ -4,6 +4,7 @@ package com.siggebig.demo.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,10 +18,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String username;
-
-    // set so only one, cant remember the annotation on flight
+    @Column(unique = true)
     private String email;
+
+    private String username;
     private String password;
 
     @ManyToMany
