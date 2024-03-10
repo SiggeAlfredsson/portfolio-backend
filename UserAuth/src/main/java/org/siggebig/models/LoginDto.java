@@ -1,4 +1,4 @@
-package com.siggebig.demo.models;
+package org.siggebig.models;
 
 import lombok.Builder;
 import lombok.Data;

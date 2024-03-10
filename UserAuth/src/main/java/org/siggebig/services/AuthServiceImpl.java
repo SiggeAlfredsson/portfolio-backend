@@ -1,7 +1,8 @@
-package com.siggebig.demo.services;
-import com.siggebig.demo.models.User;
-import com.siggebig.demo.models.LoginDto;
-import com.siggebig.demo.repositorys.UserRepository;
+package org.siggebig.services;
+
+import org.siggebig.models.LoginDto;
+import org.siggebig.models.User;
+import org.siggebig.repositorys.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
-package com.siggebig.demo.services;
+package org.siggebig.services;
 
-import com.siggebig.demo.models.LoginDto;
+import org.siggebig.models.LoginDto;
 
 public interface AuthService {
     boolean authenticate(LoginDto loginDto);

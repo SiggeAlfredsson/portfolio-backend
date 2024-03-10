@@ -1,4 +1,4 @@
-package com.siggebig.demo.config;
+package org.siggebig.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,6 @@
-package com.siggebig.demo.repositorys;
+package org.siggebig.repositorys;
 
-import com.siggebig.demo.models.User;
+import org.siggebig.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

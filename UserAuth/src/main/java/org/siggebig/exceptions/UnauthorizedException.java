@@ -1,4 +1,4 @@
-package com.siggebig.demo.exceptions;
+package org.siggebig.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

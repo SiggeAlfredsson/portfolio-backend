@@ -1,14 +1,17 @@
-package com.siggebig.demo.controllers;
+package org.siggebig.controllers;
 
-import com.siggebig.demo.models.LoginDto;
-import com.siggebig.demo.models.User;
-import com.siggebig.demo.repositorys.UserRepository;
-import com.siggebig.demo.services.JWTService;
+import org.siggebig.models.LoginDto;
+import org.siggebig.models.User;
+import org.siggebig.repositorys.UserRepository;
+import org.siggebig.services.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 

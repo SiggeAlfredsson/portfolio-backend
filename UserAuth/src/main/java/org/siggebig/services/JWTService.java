@@ -1,14 +1,14 @@
-package com.siggebig.demo.services;
+package org.siggebig.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.siggebig.demo.exceptions.UnauthorizedException;
-import com.siggebig.demo.models.LoginDto;
-import com.siggebig.demo.models.User;
-import com.siggebig.demo.repositorys.UserRepository;
+import org.siggebig.exceptions.UnauthorizedException;
+import org.siggebig.models.LoginDto;
+import org.siggebig.models.User;
+import org.siggebig.repositorys.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
