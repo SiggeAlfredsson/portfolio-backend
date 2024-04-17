@@ -19,10 +19,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean authenticate(LoginDto loginDto) {
 
-        var email = loginDto.getEmail();
+        var username = loginDto.getUsername();
         var password = loginDto.getPassword();
 
-        User auth = userRepository.findByEmail(email);
+        User auth = userRepository.findByUsername(username);
 
         return auth != null && passwordEncoder.matches(password, auth.getPassword());
 

@@ -37,7 +37,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> userReg(@RequestBody User userDTO) {
         User user = new User();
-        user.setEmail(userDTO.getEmail()); // check if it already exists?
+        user.setUsername(userDTO.getUsername()); // check if it already exists?
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         user.setPassword(encodedPassword);
         User savedUser = userRepository.save(user);

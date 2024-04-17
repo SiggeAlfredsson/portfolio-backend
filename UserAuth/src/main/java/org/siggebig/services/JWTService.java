@@ -27,7 +27,7 @@ public class JWTService {
 
         if(authService.authenticate(loginDto)) {
             return JWT.create()
-                    .withClaim("email", loginDto.getEmail())
+                    .withClaim("username", loginDto.getUsername())
                     .sign(Algorithm.HMAC256("hellofriend"));
         } else {
             throw new UnauthorizedException("User not found from token");
@@ -39,7 +39,7 @@ public class JWTService {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256("hellofriend")).build();
             DecodedJWT jwt = verifier.verify(token);
-            return jwt.getClaim("email").asString();
+            return jwt.getClaim("username").asString();
         } catch (JWTVerificationException e) {
             return null;
         }
@@ -47,7 +47,7 @@ public class JWTService {
 
     public User getUserFromToken(String token) {
         String email = getEmailFromToken(token);
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByUsername(email);
 
         if(user == null) {
             throw new UnauthorizedException("User not found from token");

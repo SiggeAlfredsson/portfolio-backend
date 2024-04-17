@@ -17,8 +17,6 @@ public class User {
     private Long id;
 
     @Column(unique = true)
-    private String email;
-
     private String username;
     private String password;
 
