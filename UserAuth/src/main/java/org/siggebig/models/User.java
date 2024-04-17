@@ -20,12 +20,13 @@ public class User {
     private String username;
     private String password;
 
-    @ManyToMany
+    // private Long pictureId;
+
+    @ManyToMany //stackoverflow?
     private Set<User> followers = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany //stackoverflow?
     private Set<User> following = new HashSet<>();
-
 
 //    soon to impl
 //    @OneToMany(mappedBy = "user")
