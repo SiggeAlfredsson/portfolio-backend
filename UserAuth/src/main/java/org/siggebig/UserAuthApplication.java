@@ -20,15 +20,15 @@ public class UserAuthApplication {
         return args -> {
 
             // if db is empty, creates a user that always exists
-            if (!userRepository.existsById(1L)) {
-                User user = new User();
-                user.setId(1L);
-                user.setEmail("admin@domain.com");
-                user.setPassword("password");
-                String encodedPasswordUser = passwordEncoder.encode(user.getPassword());
-                user.setPassword(encodedPasswordUser);
-                userRepository.save(user);
-            }
+//            if (!userRepository.existsById(1L)) {
+//                User user = new User();
+//                user.setId(1L);
+//                user.setUsername("sigge");
+//                user.setPassword("password");
+//                String encodedPasswordUser = passwordEncoder.encode(user.getPassword());
+//                user.setPassword(encodedPasswordUser);
+//                userRepository.save(user);
+//            }
 
             System.out.println("-------initalized database-------");
         };

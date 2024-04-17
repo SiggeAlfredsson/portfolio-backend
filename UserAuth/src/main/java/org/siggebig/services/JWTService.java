@@ -35,7 +35,7 @@ public class JWTService {
 
     }
 
-    public String getEmailFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256("hellofriend")).build();
             DecodedJWT jwt = verifier.verify(token);
@@ -46,7 +46,7 @@ public class JWTService {
     }
 
     public User getUserFromToken(String token) {
-        String email = getEmailFromToken(token);
+        String email = getUsernameFromToken(token);
         User user = userRepository.findByUsername(email);
 
         if(user == null) {
