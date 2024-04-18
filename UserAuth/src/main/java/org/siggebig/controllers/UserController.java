@@ -1,6 +1,7 @@
 package org.siggebig.controllers;
 
 
+import jakarta.transaction.Transactional;
 import org.siggebig.exceptions.UserNotFoundException;
 import org.siggebig.models.User;
 import org.siggebig.repositorys.UserRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -63,10 +65,12 @@ public class UserController {
             User followUser = userRepository.findById(followId)
                     .orElseThrow(() -> new UserNotFoundException("Not found User with id = " + followId));
 
-            user.getFollowing().add(followUser);
-            followUser.getFollowers().add(user);
+            user.addFollowing(followUser.getId());
+            followUser.addFollower(user.getId());
+
             userRepository.save(user);
             userRepository.save(followUser);
+
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -74,15 +78,15 @@ public class UserController {
         }
     }
 
-    @PostMapping("/unfollow/{followId}")
-    public ResponseEntity<?> unFollowUser(@PathVariable("followId") long followId, @RequestHeader("Authorization") String token) {
+    @DeleteMapping("/unfollow/{followId}")
+    public ResponseEntity<?> unfollowUser(@PathVariable("followId") long followId, @RequestHeader("Authorization") String token) {
         try {
             User user = jwtService.getUserFromToken(token);
             User followUser = userRepository.findById(followId)
                     .orElseThrow(() -> new UserNotFoundException("Not found User with id = " + followId));
 
-            user.getFollowing().remove(followUser);
-            followUser.getFollowers().remove(user);
+            user.removeFollowing(followUser.getId());
+            followUser.removeFollower(user.getId());
             userRepository.save(user);
             userRepository.save(followUser);
 
@@ -91,5 +95,13 @@ public class UserController {
             return ResponseEntity.badRequest().body("Failed to unfollow user: " + e.getMessage());
         }
     }
+
+    @GetMapping("/my-followings")
+    public ResponseEntity<List<Long>> getMyFollowings(@RequestHeader("Authorization") String token) {
+        User user = jwtService.getUserFromToken(token);
+        return ResponseEntity.ok(new ArrayList<>(user.getFollowingsIds()));
+    }
+
+
 
 }

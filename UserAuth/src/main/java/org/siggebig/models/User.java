@@ -1,18 +1,18 @@
 package org.siggebig.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "users")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
 
     @Id
@@ -27,18 +27,31 @@ public class User {
 
     private Long pictureId;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_followers",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "follower_id")}
-    )
-    @EqualsAndHashCode.Exclude
-    private Set<User> followers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "followers")
-    @EqualsAndHashCode.Exclude
-    private Set<User> following = new HashSet<>();
+    @ElementCollection
+    @Column(name = "followersIds")
+    private List<Long> followersIds = new ArrayList<>();
+
+    @ElementCollection
+    @Column(name = "followingsIds")
+    private List<Long> followingsIds = new ArrayList<>();
+
+    public void addFollower(long userId) {
+        this.followersIds.add(userId);
+    }
+
+    public void removeFollower(long userId) {
+        this.followersIds.remove(userId);
+    }
+
+    public void addFollowing(long userId) {
+        this.followingsIds.add(userId);
+    }
+
+    public void removeFollowing(long userId) {
+        this.followingsIds.remove(userId);
+    }
+
 
 //    soon to impl
 //    @OneToMany(mappedBy = "user")
