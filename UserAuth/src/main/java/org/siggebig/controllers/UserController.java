@@ -32,14 +32,15 @@ public class UserController {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+    @GetMapping("{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
         return ResponseEntity.ok(user);
     }
 
+
     @PutMapping("/update/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") long userId, @RequestBody User user, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<User> updateUser(@PathVariable("userId") long userId, @RequestBody User user, @RequestHeader("Authorization") String token) {
         User _user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Not found Driver with id = " + userId));
 
@@ -51,6 +52,7 @@ public class UserController {
         _user.setPictureId(user.getPictureId());
 
         userRepository.save(_user);
+
         return new ResponseEntity<>(_user, HttpStatus.OK);
     }
 

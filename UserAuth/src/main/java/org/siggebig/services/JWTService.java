@@ -36,6 +36,12 @@ public class JWTService {
     }
 
     public String getUsernameFromToken(String token) {
+
+        // remove the "Bearer " prefix if it exists in the token
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256("hellofriend")).build();
             DecodedJWT jwt = verifier.verify(token);
@@ -46,6 +52,12 @@ public class JWTService {
     }
 
     public User getUserFromToken(String token) {
+
+        // remove the "Bearer " prefix if it exists in the token
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
         String email = getUsernameFromToken(token);
         User user = userRepository.findByUsername(email);
 

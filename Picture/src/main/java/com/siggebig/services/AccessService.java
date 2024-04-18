@@ -13,7 +13,7 @@ public class AccessService {
 
     public void verifyUserToken(User user, String token) {
         String username = jwtService.getUsernameFromToken(token);
-        if (!username.equals(user.getUsername()) || !user.isAdmin()) {
+        if (!username.equals(user.getUsername()) && !user.isAdmin()) {
             throw new UnauthorizedException("Invalid Token");
         }
         return;
