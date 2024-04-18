@@ -1,4 +1,4 @@
-package org.siggebig.models;
+package com.siggebig.models;
 
 
 import jakarta.persistence.*;
@@ -20,7 +20,7 @@ public class User {
     private String username;
     private String password;
 
-    private boolean admin;
+    boolean admin;
 
     private Long pictureId;
 
