@@ -42,7 +42,7 @@ public class UserController {
     @PutMapping("/update/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable("userId") long userId, @RequestBody User user, @RequestHeader("Authorization") String token) {
         User _user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Not found Driver with id = " + userId));
+                .orElseThrow(() -> new UserNotFoundException("Not found User with id = " + userId));
 
         accessService.verifyUserToken(_user, token);
 
@@ -56,5 +56,40 @@ public class UserController {
         return new ResponseEntity<>(_user, HttpStatus.OK);
     }
 
+    @PostMapping("/follow/{followId}")
+    public ResponseEntity<?> followUser(@PathVariable("followId") long followId, @RequestHeader("Authorization") String token) {
+        try {
+            User user = jwtService.getUserFromToken(token);
+            User followUser = userRepository.findById(followId)
+                    .orElseThrow(() -> new UserNotFoundException("Not found User with id = " + followId));
+
+            user.getFollowing().add(followUser);
+            followUser.getFollowers().add(user);
+            userRepository.save(user);
+            userRepository.save(followUser);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to follow user: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/unfollow/{followId}")
+    public ResponseEntity<?> unFollowUser(@PathVariable("followId") long followId, @RequestHeader("Authorization") String token) {
+        try {
+            User user = jwtService.getUserFromToken(token);
+            User followUser = userRepository.findById(followId)
+                    .orElseThrow(() -> new UserNotFoundException("Not found User with id = " + followId));
+
+            user.getFollowing().remove(followUser);
+            followUser.getFollowers().remove(user);
+            userRepository.save(user);
+            userRepository.save(followUser);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to unfollow user: " + e.getMessage());
+        }
+    }
 
 }

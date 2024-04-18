@@ -24,17 +24,5 @@ public class User {
 
     private Long pictureId;
 
-    @ManyToMany //stackoverflow?
-    private Set<User> followers = new HashSet<>();
-
-    @ManyToMany //stackoverflow?
-    private Set<User> following = new HashSet<>();
-
-//    soon to impl
-//    @OneToMany(mappedBy = "user")
-//    @JsonIgnoreProperties("user")
-//    private List<Project> projects = new ArrayList<>();
-
-
-
+    //no need for followers here, but will add project later cuz that will use pictures as well.
 }
