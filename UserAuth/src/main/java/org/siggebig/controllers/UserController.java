@@ -2,6 +2,7 @@ package org.siggebig.controllers;
 
 
 import jakarta.transaction.Transactional;
+import org.siggebig.exceptions.UnauthorizedException;
 import org.siggebig.exceptions.UserNotFoundException;
 import org.siggebig.models.User;
 import org.siggebig.repositorys.UserRepository;
@@ -71,6 +72,16 @@ public class UserController {
             User followUser = userRepository.findById(followId)
                     .orElseThrow(() -> new UserNotFoundException("Not found User with id = " + followId));
 
+            if (followUser.getUsername().equals(user.getUsername())) {
+                throw new UnauthorizedException("Cant follow urself");
+            }
+
+            // check so not already follows
+
+            if (user.getFollowingsIds().contains(followId)) {
+                throw new UnauthorizedException("Cant follow twice");
+            }
+
             user.addFollowing(followUser.getId());
             followUser.addFollower(user.getId());
 
@@ -90,6 +101,10 @@ public class UserController {
             User user = jwtService.getUserFromToken(token);
             User followUser = userRepository.findById(followId)
                     .orElseThrow(() -> new UserNotFoundException("Not found User with id = " + followId));
+
+            if (followUser.getUsername().equals(user.getUsername())) {
+                throw new UnauthorizedException("Cant unfollow urself");
+            }
 
             user.removeFollowing(followUser.getId());
             followUser.removeFollower(user.getId());
