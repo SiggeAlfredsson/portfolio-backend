@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.time.LocalDateTime;
 
 @SpringBootApplication
 public class UserAuthApplication {
@@ -23,6 +24,9 @@ public class UserAuthApplication {
                     User user = new User();
                     user.setUsername("user" + i); // Unique username for each user
                     user.setPassword(passwordEncoder.encode("password")); // Encode the password
+                    user.setDescription("Very friendly user");
+                    user.setRegisteredAt(LocalDateTime.now()); // Set this to current date and time
+                    user.setLastSeen(LocalDateTime.now()); // Set this to current date and time as well
                     userRepository.save(user); // Save the user to the repository
                 }
             }
