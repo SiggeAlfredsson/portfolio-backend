@@ -40,6 +40,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+        User user = userRepository.findByUsername(username);
+        return ResponseEntity.ok(user);
+    }
+
 
     @PutMapping("/update/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable("userId") long userId, @RequestBody User user, @RequestHeader("Authorization") String token) {
