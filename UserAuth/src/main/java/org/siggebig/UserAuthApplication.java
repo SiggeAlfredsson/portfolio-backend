@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 @SpringBootApplication
 public class UserAuthApplication {
     public static void main(String[] args) {
@@ -18,20 +17,16 @@ public class UserAuthApplication {
     @Bean
     public CommandLineRunner run(PasswordEncoder passwordEncoder, UserRepository userRepository) {
         return args -> {
-
-            // if db is empty, creates a user that always exists
-//            if (!userRepository.existsById(1L)) {
-//                User user = new User();
-//                user.setId(1L);
-//                user.setUsername("sigge");
-//                user.setPassword("password");
-//                String encodedPasswordUser = passwordEncoder.encode(user.getPassword());
-//                user.setPassword(encodedPasswordUser);
-//                userRepository.save(user);
-//            }
-
-            System.out.println("-------initalized database-------");
+            // Check if there are already 20 users, if not, create them
+            if (userRepository.count() < 20) {
+                for (int i = 1; i <= 20; i++) {
+                    User user = new User();
+                    user.setUsername("user" + i); // Unique username for each user
+                    user.setPassword(passwordEncoder.encode("password")); // Encode the password
+                    userRepository.save(user); // Save the user to the repository
+                }
+            }
+            System.out.println("-------Initialized database with 20 users-------");
         };
     }
 }
-
