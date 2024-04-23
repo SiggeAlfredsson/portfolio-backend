@@ -83,7 +83,13 @@ public class PostController {
         // new post object or post object? how do with pictures
         post.setCreatedAt(LocalDateTime.now());
         post.setUser(user);
-        postRepository.save(post);
+
+        post = postRepository.save(post);
+
+        user.addPost(post.getId());
+
+        userService.updateUser(user, token);
+
         return ResponseEntity.ok().build();
     }
 
@@ -124,8 +130,11 @@ public class PostController {
 
         comment = commentRepository.save(comment);
 
-        post.getComments().add(comment);
+        post.getComments().add(comment); // does this happen automaticly?
         postRepository.save(post);
+
+        user.addComment(comment.getId());
+        userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();
     }
@@ -137,7 +146,7 @@ public class PostController {
         accessService.verifyUserAccessToComment(user, comment); // the idea is not that a admin should edit other comments but a admin will pass this check
 
         comment.setText(newCommentText);
-        commentRepository.save(comment);§
+        commentRepository.save(comment);
         return ResponseEntity.ok().build();
     }
 
@@ -147,6 +156,9 @@ public class PostController {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException("Comment not found"));
         accessService.verifyUserAccessToComment(user, comment); // owner and admin pass this
         commentRepository.delete(comment);
+
+        user.removeComment(comment.getId());
+        userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();
     }
@@ -159,12 +171,11 @@ public class PostController {
             throw new UnauthorizedException("private post, cant star");
         }
 
-        // no idea if this is correct? werid because the user repo does not exist in this microservice
-        user.getStarredPosts().add(post); // can i skip this? The userRepo is in another microservice so is kinda a pain to save the user object but it can be done if needed.
-
         post.getStars().add(user);
         postRepository.save(post);
-        // enought to save post?
+
+        user.addStar(post.getId());
+        userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();
     }
@@ -176,17 +187,16 @@ public class PostController {
         if (post.isPrivate()) { // for now i'll just have so private posts cant get new comments
             throw new UnauthorizedException("private post, cant un star"); // actule maybe should be able to
         }
-        // no idea if this is correct? werid because the user repo does not exist in this microservice
-        user.getStarredPosts().remove(post); // can i skip this? The userRepo is in another microservice so is kinda a pain to save the user object but it can be done if needed.
 
         post.getStars().remove(user);
         postRepository.save(post);
-        // enought to save post?
+
+        user.removeStar(post.getId());
+        userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();
     }
 
-    // like post - jwt
     @PostMapping("/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable Long postId, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
@@ -195,12 +205,11 @@ public class PostController {
             throw new UnauthorizedException("private post, cant like");
         }
 
-        // no idea if this is correct? werid because the user repo does not exist in this microservice
-        user.getLikedPosts().add(post); // can i skip this? The userRepo is in another microservice so is kinda a pain to save the user object but it can be done if needed.
-
         post.getLikes().add(user);
         postRepository.save(post);
-        // enought to save post?
+
+        user.addLike(post.getId());
+        userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();
     }
@@ -214,12 +223,11 @@ public class PostController {
             throw new UnauthorizedException("private post, cant like");
         }
 
-        // no idea if this is correct? werid because the user repo does not exist in this microservice
-        user.getLikedPosts().remove(post); // can i skip this? The userRepo is in another microservice so is kinda a pain to save the user object but it can be done if needed.
-
         post.getLikes().remove(user);
         postRepository.save(post);
-        // enought to save post?
+
+        user.removeLike(post.getId());
+        userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();
     }

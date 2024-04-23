@@ -1,6 +1,7 @@
 package com.siggebig.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -51,24 +52,52 @@ public class User {
         this.followingsIds.remove(userId);
     }
 
+    @ElementCollection
+    @Column(name = "postsIds")
+    private List<Long> postsIds = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<Comment> comments = new HashSet<>();
+    public void addPost(long postId) {
+        this.postsIds.add(postId);
+    }
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_likes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id")
-    )
-    private Set<Post> likedPosts = new HashSet<>();
+    public void removePost(long postId) {
+        this.postsIds.remove(postId);
+    }
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_stars",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id")
-    )
-    private Set<Post> starredPosts = new HashSet<>();
+    @ElementCollection
+    @Column(name = "commentsIds")
+    private List<Long> commentsIds = new ArrayList<>();
+
+    public void addComment(long commentId) {
+        this.commentsIds.add(commentId);
+    }
+
+    public void removeComment(long commentId) {
+        this.commentsIds.remove(commentId);
+    }
+
+    @ElementCollection
+    @Column(name = "likedPostsIds")
+    private List<Long> likedPostsIds = new ArrayList<>();
+
+    public void addLike(long postId) {
+        this.likedPostsIds.add(postId);
+    }
+
+    public void removeLike(long postId) {
+        this.likedPostsIds.remove(postId);
+    }
+
+    @ElementCollection
+    @Column(name = "starredPostsIds")
+    private List<Long> starredPostsIds = new ArrayList<>();
+
+    public void addStar(long postId) {
+        this.starredPostsIds.add(postId);
+    }
+
+    public void removeStar(long postId) {
+        this.starredPostsIds.remove(postId);
+    }
 
 }

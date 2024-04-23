@@ -1,9 +1,8 @@
 package org.siggebig.controllers;
 
 
-import jakarta.transaction.Transactional;
-import org.siggebig.exceptions.UserNotFoundException;
 import org.siggebig.models.User;
+import org.siggebig.exceptions.UserNotFoundException;
 import org.siggebig.repositorys.UserRepository;
 import org.siggebig.services.AccessService;
 import org.siggebig.services.JWTService;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
-
 import java.util.List;
 
 @RestController
@@ -61,6 +59,12 @@ public class UserController {
 
         _user.setUsername(user.getUsername());
         _user.setPictureId(user.getPictureId());
+
+        // do it like this?
+        _user.setPostsIds(user.getPostsIds());
+        _user.setCommentsIds(user.getCommentsIds());
+        _user.setLikedPostsIds(user.getLikedPostsIds());
+        _user.setStarredPostsIds(user.getStarredPostsIds());
 
         userRepository.save(_user);
 
