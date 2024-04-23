@@ -1,14 +1,11 @@
 package org.siggebig.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Data
 @Entity
@@ -26,6 +23,11 @@ public class User {
     private boolean admin;
 
     private Long pictureId;
+
+    private String description;
+
+    private LocalDateTime registeredAt;
+    private LocalDateTime lastSeen;
 
 
     @ElementCollection
