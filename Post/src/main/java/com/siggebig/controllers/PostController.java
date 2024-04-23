@@ -1,6 +1,7 @@
 package com.siggebig.controllers;
 
 import com.siggebig.repositorys.PostRepository;
+import com.siggebig.services.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,28 +14,31 @@ public class PostController {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private JWTService jwtService;
+
     //get post for infinity scroll || maybe use "nexttoken" ?
 
-    //get post from id
+    //get post from id ---- if post is private -> jwt
 
-    //get list of posts from username
+    //get list of posts from username || "public list if no token, if owner, all list"
 
-    //create new post
+    //create new post - with jwt
 
-    //edit a existing post
+    //edit a existing post - jwt
 
-    // add comment
+    // add comment -jwt
 
-    // edit existing comment
+    // edit existing comment -jwt
 
-    // delete comment
+    // delete comment - jwt owner of comment OR jwt owner of post
 
-    // star post
+    // star post - jwt
 
-    // un star post
+    // un star post - jwt
 
-    // like post
+    // like post - jwt
 
-    // unlike post
+    // unlike post - jwt
 
 }
