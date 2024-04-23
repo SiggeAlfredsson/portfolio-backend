@@ -15,6 +15,7 @@
   <modules>
     <module>UserAuth</module>
       <module>Picture</module>
+      <module>Post</module>
   </modules>
 
   <properties>
