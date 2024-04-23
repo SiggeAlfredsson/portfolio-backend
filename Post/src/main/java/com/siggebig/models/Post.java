@@ -20,6 +20,10 @@ public class Post {
     private LocalDateTime createdAt;
     private boolean isPrivate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // ensure this matches your database column name
+    private User user;
+
     @ElementCollection
     @CollectionTable(
             name = "post_pictures",

@@ -29,14 +29,23 @@ public class UserController {
     private AccessService accessService;
 
 
+    // should everything be included? Like private posts?...
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
+    // should everything be included? Like private posts?...
     @GetMapping("{userId}")
     public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return ResponseEntity.ok(user);
+    }
+
+    // should everything be included? Like private posts?... this is temporary
+    @GetMapping("username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+        User user = userRepository.findByUsername(username);
         return ResponseEntity.ok(user);
     }
 

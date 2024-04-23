@@ -1,9 +1,11 @@
 package com.siggebig.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 public class Comment {
     @Id

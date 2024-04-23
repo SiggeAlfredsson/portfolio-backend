@@ -49,7 +49,7 @@ public class PictureController {
             @RequestHeader("Authorization") String token
             ) throws IOException {
 
-        User user = userService.getUserByUserId(userId);
+        User user = userService.getUserByUserId(userId); // should i use token here and get user from token instead? I will do that in post s
 
         accessService.verifyUserToken(user, token);
 
