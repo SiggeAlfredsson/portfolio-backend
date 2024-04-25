@@ -59,28 +59,31 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPostById(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false, defaultValue = "") String token) {
+    public ResponseEntity<?> getPostById(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false, defaultValue = "") String token) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException("Post not found"));
 
-        if (post.isPrivate() && !token.isEmpty()) { // if post is private, check if the user owns the post or the user isAdmin
-
+        if (post.isPrivate()) {
+            if(token.isEmpty()) {
+                throw new UnauthorizedException("private post, you do not have access");
+            }
             User user = jwtService.getUserFromToken(token);
             accessService.verifyUserAccessToPost(user, post);
 
             return ResponseEntity.ok().body(post);
         }
-
-        throw new UnauthorizedException("private post, you do not have access");
+        return ResponseEntity.ok().body(post);
     }
 
     @GetMapping("/user/{username}")
-    public ResponseEntity<?> getPostsByUsername(@PathVariable String username, @RequestHeader(value = "Authorization", required = false, defaultValue = "") String token) {
+    public ResponseEntity<?> getPostsByUsername(@PathVariable("username") String username, @RequestHeader(value = "Authorization", required = false, defaultValue = "") String token) {
         User user = userService.getUserByUsername(username);
         List<Post> posts = postRepository.findByUserId(user.getId());
 
         if (!token.isEmpty()) {
             User jwtUser = jwtService.getUserFromToken(token);
-            if (jwtUser.isAdmin() || jwtUser.getUsername() == username) {
+            System.out.println("here");
+            if (jwtUser.isAdmin() || jwtUser.getUsername().equals(username)) {
+                System.out.println("here123123");
                 return ResponseEntity.ok().body(posts);
             }
         }
@@ -116,7 +119,7 @@ public class PostController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editPost(@PathVariable Long id,
+    public ResponseEntity<?> editPost(@PathVariable("id") Long id,
                                       @RequestBody Post updatedPost,
                                       @RequestHeader ("Authorization") String token) {
 
@@ -136,7 +139,7 @@ public class PostController {
 
 
     @PostMapping("/{postId}/comment")
-    public ResponseEntity<?> addComment(@PathVariable Long postId, @RequestBody String commentText, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<?> addComment(@PathVariable("postId") Long postId, @RequestBody String commentText, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
 
@@ -163,7 +166,7 @@ public class PostController {
     }
 
     @PutMapping("/comment/{commentId}")
-    public ResponseEntity<?> editComment(@PathVariable Long commentId, @RequestBody String newCommentText, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<?> editComment(@PathVariable("commentId") Long commentId, @RequestBody String newCommentText, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException("Comment not found"));
         accessService.verifyUserAccessToComment(user, comment); // the idea is not that a admin should edit other comments but a admin will pass this check
@@ -174,7 +177,7 @@ public class PostController {
     }
 
     @DeleteMapping("/comment/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long commentId, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<?> deleteComment(@PathVariable("commentId") Long commentId, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException("Comment not found"));
         accessService.verifyUserAccessToComment(user, comment); // owner and admin pass this
@@ -187,7 +190,7 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/star")
-    public ResponseEntity<?> starPost(@PathVariable Long postId, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<?> starPost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
         if (post.isPrivate()) { // for now i'll just have so cant star private
@@ -204,7 +207,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}/unstar")
-    public ResponseEntity<?> unStarPost(@PathVariable Long postId, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<?> unStarPost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
         if (post.isPrivate()) { // for now i'll just have so private posts cant get new comments
@@ -221,7 +224,7 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<?> likePost(@PathVariable Long postId, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<?> likePost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
         if (post.isPrivate()) { // for now
@@ -239,7 +242,7 @@ public class PostController {
 
     // unlike post - jwt
     @DeleteMapping("/{postId}/unlike")
-    public ResponseEntity<?> unlikePost(@PathVariable Long postId, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<?> unlikePost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
         if (post.isPrivate()) { // for now
