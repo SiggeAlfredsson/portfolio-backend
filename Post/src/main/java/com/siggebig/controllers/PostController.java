@@ -10,11 +10,14 @@ import com.siggebig.repositorys.CommentRepository;
 import com.siggebig.repositorys.PostRepository;
 import com.siggebig.services.AccessService;
 import com.siggebig.services.JWTService;
+import com.siggebig.services.PictureService;
 import com.siggebig.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,9 +35,18 @@ public class PostController {
     private UserService userService;
 
     @Autowired
+    private PictureService pictureService;
+
+    @Autowired
     private AccessService accessService;
+
     @Autowired
     private CommentRepository commentRepository;
+
+    @GetMapping("/all") // for dev
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
+    }
 
     //get post for infinity scroll || maybe use "nexttoken" ?
     @GetMapping
@@ -63,11 +75,12 @@ public class PostController {
 
     @GetMapping("/user/{username}")
     public ResponseEntity<?> getPostsByUsername(@PathVariable String username, @RequestHeader(value = "Authorization", required = false, defaultValue = "") String token) {
-        List<Post> posts = postRepository.findByUserUsername(username);
+        User user = userService.getUserByUsername(username);
+        List<Post> posts = postRepository.findByUserId(user.getId());
 
         if (!token.isEmpty()) {
-            User user = jwtService.getUserFromToken(token);
-            if (user.isAdmin() || user.getUsername() == username) {
+            User jwtUser = jwtService.getUserFromToken(token);
+            if (jwtUser.isAdmin() || jwtUser.getUsername() == username) {
                 return ResponseEntity.ok().body(posts);
             }
         }
@@ -78,35 +91,45 @@ public class PostController {
 
     //create new post - with jwt
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody Post post, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<?> createPost(@RequestPart("post") Post post,
+                                        @RequestPart(value = "files", required = false) MultipartFile[] files,
+                                        @RequestHeader("Authorization") String token) throws IOException {
         User user = jwtService.getUserFromToken(token);
-        // new post object or post object? how do with pictures
-        post.setCreatedAt(LocalDateTime.now());
-        post.setUser(user);
-
-        post = postRepository.save(post);
-
-        user.addPost(post.getId());
-
+        Post newPost = new Post();
+        newPost.setCreatedAt(LocalDateTime.now());
+        newPost.setUserId(user.getId());
+        newPost.setTitle(post.getTitle());
+        newPost.setDescription(post.getDescription());
+        newPost.setPrivate(post.isPrivate());
+        newPost = postRepository.save(newPost);
+        user.addPost(newPost.getId());
         userService.updateUser(user, token);
+
+        if(files != null) {
+            List<Long> picIds = pictureService.uploadPictures(files);
+            picIds.forEach(newPost::addPictureId);
+            postRepository.save(newPost);
+        }
 
         return ResponseEntity.ok().build();
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editPost(@PathVariable Long id, @RequestBody Post updatedPost, @RequestHeader ("Authorization") String token) { //
+    public ResponseEntity<?> editPost(@PathVariable Long id,
+                                      @RequestBody Post updatedPost,
+                                      @RequestHeader ("Authorization") String token) {
+
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException("Post not found"));
         User user = jwtService.getUserFromToken(token);
         accessService.verifyUserAccessToPost(user, post);
 
-        // how should pictures be updated??? !!!!
-
-        post.setName(updatedPost.getName());
+        post.setTitle(updatedPost.getTitle());
         post.setDescription(updatedPost.getDescription());
         post.setPrivate(updatedPost.isPrivate());
 
         postRepository.save(post);
+
 
         return ResponseEntity.ok().build();
     }
@@ -124,7 +147,7 @@ public class PostController {
         Comment comment = new Comment();
         comment.setText(commentText);
         comment.setCreatedAt(LocalDateTime.now());
-        comment.setUser(user);
+        comment.setUserId(user.getId());
 
         comment.setPost(post); // this yes or no
 

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/pictures")
@@ -28,6 +30,11 @@ public class PictureController {
 
     @Autowired
     private AccessService accessService;
+
+    @GetMapping("/all") // for dev
+    public List<Picture> getAllPictures() {
+        return pictureRepository.findAll();
+    }
 
     @GetMapping("/{pictureId}")
     public ResponseEntity<byte[]> getPictureById(@PathVariable("pictureId") long pictureId) {
@@ -94,6 +101,24 @@ public class PictureController {
         pictureRepository.save(picture);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/upload/") // unsure of auth here
+    public ResponseEntity<List<Long>> uploadPostPictures(
+            @RequestParam("files") MultipartFile[] files
+    ) throws IOException {
+        List<Long> pictureIds = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                Picture picture = new Picture();
+                picture.setData(file.getBytes());
+                Picture savedPic = pictureRepository.save(picture);
+                pictureIds.add(savedPic.getId());
+            }
+        }
+
+        return new ResponseEntity<>(pictureIds, HttpStatus.OK);
     }
 
 

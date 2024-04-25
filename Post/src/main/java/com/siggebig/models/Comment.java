@@ -15,8 +15,8 @@ public class Comment {
 
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    private User user;
+    private Long userId;
+
 
     @ManyToOne
     @JoinColumn(name = "post_id")

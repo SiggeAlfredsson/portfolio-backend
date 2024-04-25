@@ -15,30 +15,34 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private LocalDateTime createdAt;
     private boolean isPrivate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // ensure this matches your database column name
-    private User user;
+    private Long userId;
 
     @ElementCollection
-    @CollectionTable(
-            name = "post_pictures",
-            joinColumns = @JoinColumn(name = "post_id")
-    )
-    @Column(name = "picture_id")
-    private List<Long> pictureIds = new ArrayList<>();
+    @Column(name = "picturesIds")
+    private List<Long> picturesIds = new ArrayList<>();
+
+    public void addPictureId(long id) {
+        this.picturesIds.add(id);
+    }
+
+    public void removePictureId(long id) {
+        this.picturesIds.remove(id);
+    }
+
+
 
     @OneToMany(mappedBy = "post")
     private Set<Comment> comments = new HashSet<>();
 
-    @ManyToMany(mappedBy = "likedPosts")
+    @ManyToMany()
     private Set<User> likes = new HashSet<>();
 
-    @ManyToMany(mappedBy = "starredPosts")
+    @ManyToMany()
     private Set<User> stars = new HashSet<>();
 }
 

@@ -22,14 +22,14 @@ public class AccessService {
     }
 
     public void verifyUserAccessToPost(User user, Post post) {
-        if (post.getUser() != user && !user.isAdmin()) {
+        if (post.getUserId() != user.getId() && !user.isAdmin()) {
             throw new UnauthorizedException("You do not have access to this post");
         }
         return;
     }
 
     public void verifyUserAccessToComment(User user, Comment comment) {
-        if (comment.getUser() != user && !user.isAdmin()) {
+        if (comment.getUserId() != user.getId() && !user.isAdmin()) {
             throw new UnauthorizedException("You do not have access to this comment");
         }
         return;
