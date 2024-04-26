@@ -15,6 +15,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByIsPrivateFalse(Pageable pageable);
 
+    Page<Post> findByIsPrivateFalseOrderByCreatedAtDesc(Pageable pageable);
+//    List<Post> findByIsPrivateFalse();
+
 //    List<Post> findAll(Pageable pageable);
 
 
