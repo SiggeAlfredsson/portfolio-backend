@@ -75,19 +75,16 @@ public class PostController {
     }
 
     @GetMapping("/user/{username}")
-    public ResponseEntity<?> getPostsByUsername(@PathVariable("username") String username, @RequestHeader(value = "Authorization", required = false, defaultValue = "") String token) {
+    public ResponseEntity<?> getPostsByUsername(@PathVariable("username") String username, @RequestHeader(value = "Authorization", required = false) String token) {
         User user = userService.getUserByUsername(username);
         List<Post> posts = postRepository.findByUserId(user.getId());
 
-        if (!token.isEmpty()) {
+        if (!(token == null)) {
             User jwtUser = jwtService.getUserFromToken(token);
-            System.out.println("here");
             if (jwtUser.isAdmin() || jwtUser.getUsername().equals(username)) {
-                System.out.println("here123123");
                 return ResponseEntity.ok().body(posts);
             }
         }
-
         posts.removeIf(Post::isPrivate);
         return ResponseEntity.ok().body(posts);
     }
