@@ -1,5 +1,6 @@
 package com.siggebig.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,11 +16,12 @@ public class Comment {
 
     private LocalDateTime createdAt;
 
-    private Long userId;
+    private String username; // userId?
 
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @JsonIgnoreProperties("comments")
     private Post post;
 }
 
