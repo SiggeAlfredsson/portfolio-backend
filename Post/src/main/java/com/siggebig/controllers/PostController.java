@@ -196,14 +196,14 @@ public class PostController {
         }
 
         if(post.getStars().contains(user.getId())) {
+            user.removeStar(post.getId());
             post.removeStar(user.getId());
         } else {
+            user.addStar(post.getId());
             post.addStar(user.getId());
         }
 
         postRepository.save(post);
-
-        user.addStar(post.getId());
         userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();

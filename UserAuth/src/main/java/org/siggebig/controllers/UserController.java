@@ -130,6 +130,11 @@ public class UserController {
         return ResponseEntity.ok(new ArrayList<>(user.getFollowingsIds()));
     }
 
+    @PostMapping("/convert-ids")
+    public ResponseEntity<List<User>> convertUserIdsToUsers(@RequestBody List<Long> userIds) {
+        List<User> users = userRepository.findByIdIn(userIds);
+        return ResponseEntity.ok().body(users);
+    }
 
 
 }

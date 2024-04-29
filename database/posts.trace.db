@@ -1,19 +1,2 @@
-2024-04-29 09:46:02.924481+02:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
-2024-04-29 09:50:32.843555+02:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
-2024-04-29 09:53:41.784181+02:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
-2024-04-29 10:29:06.446264+02:00 jdbc[13]: exception
-org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
-2024-04-29 10:29:32.186706+02:00 jdbc[13]: exception
-org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
-2024-04-29 10:29:53.284600+02:00 jdbc[13]: exception
-org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
-2024-04-29 10:30:06.602286+02:00 jdbc[13]: exception
-org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
-2024-04-29 10:44:23.412132+02:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLDataException: Value too long for column "DESCRIPTION CHARACTER VARYING(255)": "'There are many variations of passages of Lorem Ipsum available, but the majorit... (750)"; SQL statement:
-insert into post (created_at,description,is_private,title,username,id) values (?,?,?,?,?,default) [22001-224]
-2024-04-29 10:48:45.649188+02:00 jdbc[3]: exception
+2024-04-29 13:32:36.276288+02:00 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
