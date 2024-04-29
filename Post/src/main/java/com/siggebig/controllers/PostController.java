@@ -115,7 +115,7 @@ public class PostController {
             postRepository.save(newPost);
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(newPost);
     }
 
 
