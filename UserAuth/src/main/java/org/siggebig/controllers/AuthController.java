@@ -31,7 +31,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody LoginDto loginDto) {
         String token = jwtService.getToken(loginDto); // returns http.UNAUTH if auth fails
-        return  ResponseEntity.ok(Map.of("token", token));
+        User user = jwtService.getUserFromToken(token);
+        return ResponseEntity.ok(Map.of("token", token, "user", user));
     }
 
     @PostMapping("/register")
@@ -42,6 +43,12 @@ public class AuthController {
         user.setPassword(encodedPassword);
         User savedUser = userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    }
+
+    @PostMapping("/token")
+    public ResponseEntity<?> validateToken(@RequestBody String token) {
+        User user = jwtService.getUserFromToken(token);
+        return ResponseEntity.ok(user);
     }
 
 

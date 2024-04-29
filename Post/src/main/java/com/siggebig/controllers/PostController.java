@@ -51,6 +51,11 @@ public class PostController {
         return postRepository.findAll();
     }
 
+    @GetMapping("/allcomments") // for dev
+    public List<Comment> getAllComment() {
+        return commentRepository.findAll();
+    }
+
     @GetMapping("/scroll/public")
     public ResponseEntity<Page<Post>> getPublicPosts(@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -76,8 +81,7 @@ public class PostController {
 
     @GetMapping("/user/{username}")
     public ResponseEntity<?> getPostsByUsername(@PathVariable("username") String username, @RequestHeader(value = "Authorization", required = false) String token) {
-        User user = userService.getUserByUsername(username);
-        List<Post> posts = postRepository.findByUserId(user.getId());
+        List<Post> posts = postRepository.findByUsername(username);
 
         if (!(token == null)) {
             User jwtUser = jwtService.getUserFromToken(token);
@@ -97,7 +101,7 @@ public class PostController {
         User user = jwtService.getUserFromToken(token);
         Post newPost = new Post();
         newPost.setCreatedAt(LocalDateTime.now());
-        newPost.setUserId(user.getId());
+        newPost.setUsername(user.getUsername());
         newPost.setTitle(post.getTitle());
         newPost.setDescription(post.getDescription());
         newPost.setPrivate(post.isPrivate());
@@ -140,24 +144,21 @@ public class PostController {
         User user = jwtService.getUserFromToken(token);
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
 
-        if (post.isPrivate()) { // for now i'll just have so private posts cant get new comments
-            throw new UnauthorizedException("private post, cant add comments");
+        if (post.isPrivate()) {
+            throw new UnauthorizedException("Private post, cannot add comments");
         }
 
         Comment comment = new Comment();
         comment.setText(commentText);
         comment.setCreatedAt(LocalDateTime.now());
-        comment.setUserId(user.getId());
-
-        comment.setPost(post); // this yes or no
+        comment.setUsername(user.getUsername());
+        comment.setPost(post);
 
         comment = commentRepository.save(comment);
 
-        post.getComments().add(comment); // does this happen automaticly?
-        postRepository.save(post);
-
         user.addComment(comment.getId());
         userService.updateUser(user, token);
+
 
         return ResponseEntity.ok().build();
     }
@@ -194,27 +195,15 @@ public class PostController {
             throw new UnauthorizedException("private post, cant star");
         }
 
-        post.getStars().add(user);
+        if(post.getStars().contains(user.getId())) {
+            post.removeStar(user.getId());
+        } else {
+            post.addStar(user.getId());
+        }
+
         postRepository.save(post);
 
         user.addStar(post.getId());
-        userService.updateUser(user, token);
-
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{postId}/unstar")
-    public ResponseEntity<?> unStarPost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
-        User user = jwtService.getUserFromToken(token);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
-        if (post.isPrivate()) { // for now i'll just have so private posts cant get new comments
-            throw new UnauthorizedException("private post, cant un star"); // actule maybe should be able to
-        }
-
-        post.getStars().remove(user);
-        postRepository.save(post);
-
-        user.removeStar(post.getId());
         userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();
@@ -228,28 +217,15 @@ public class PostController {
             throw new UnauthorizedException("private post, cant like");
         }
 
-        post.getLikes().add(user);
+        if(post.getLikes().contains(user.getId())) {
+            post.removeLike(user.getId());
+        } else {
+            post.addLike(user.getId());
+        }
+
         postRepository.save(post);
 
         user.addLike(post.getId());
-        userService.updateUser(user, token);
-
-        return ResponseEntity.ok().build();
-    }
-
-    // unlike post - jwt
-    @DeleteMapping("/{postId}/unlike")
-    public ResponseEntity<?> unlikePost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
-        User user = jwtService.getUserFromToken(token);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
-        if (post.isPrivate()) { // for now
-            throw new UnauthorizedException("private post, cant like");
-        }
-
-        post.getLikes().remove(user);
-        postRepository.save(post);
-
-        user.removeLike(post.getId());
         userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();

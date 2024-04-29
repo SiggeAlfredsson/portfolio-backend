@@ -20,7 +20,7 @@ public class Post {
     private LocalDateTime createdAt;
     private boolean isPrivate;
 
-    private Long userId;
+    private String username; // userId?
 
     @ElementCollection
     @Column(name = "picturesIds")
@@ -37,12 +37,33 @@ public class Post {
 
 
     @OneToMany(mappedBy = "post")
-    private Set<Comment> comments = new HashSet<>();
+    private List<Comment> comments = new ArrayList<>();
 
-    @ManyToMany()
-    private Set<User> likes = new HashSet<>();
+    @ElementCollection
+    @Column(name = "starsUserIds")
+    private List<Long> stars = new ArrayList<>(); // use username instead?
 
-    @ManyToMany()
-    private Set<User> stars = new HashSet<>();
+    public void addStar(long userId) {
+        this.stars.add(userId);
+    }
+
+    public void removeStar(long userId) {
+        this.stars.remove(userId);
+    }
+
+    @ElementCollection
+    @Column(name = "likesUserIds")
+    private List<Long> likes = new ArrayList<>(); // use username instead?
+
+    public void addLike(long userId) {
+        this.likes.add(userId);
+    }
+
+    public void removeLike(long userId) {
+        this.likes.remove(userId);
+    }
+
+
+
 }
 

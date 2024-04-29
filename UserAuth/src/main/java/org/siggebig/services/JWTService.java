@@ -52,14 +52,13 @@ public class JWTService {
     }
 
     public User getUserFromToken(String token) {
-
         // remove the "Bearer " prefix if it exists in the token
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
 
-        String email = getUsernameFromToken(token);
-        User user = userRepository.findByUsername(email);
+        String username = getUsernameFromToken(token);
+        User user = userRepository.findByUsername(username);
 
         if(user == null) {
             throw new UnauthorizedException("User not found from token");
