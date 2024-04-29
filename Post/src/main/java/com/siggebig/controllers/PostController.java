@@ -152,6 +152,8 @@ public class PostController {
         // for each comment get user removeComment?
         // for each star get user removeStar?
 
+        post.getComments().forEach(comment -> commentRepository.delete(comment)); // should i do like this and i do a helper class that does all logic for each star like and comment
+
         postRepository.delete(post);
         userService.updateUser(owner, token);
 
