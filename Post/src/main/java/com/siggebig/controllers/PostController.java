@@ -174,6 +174,20 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
+        User user = jwtService.getUserFromToken(token);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
+        accessService.verifyUserAccessToPost(user, post); // owner and admin pass this
+
+        postRepository.delete(post);
+
+        user.removePost(post.getId());
+        userService.updateUser(user, token);
+
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable("commentId") Long commentId, @RequestHeader ("Authorization") String token) {
         User user = jwtService.getUserFromToken(token);
@@ -219,13 +233,13 @@ public class PostController {
 
         if(post.getLikes().contains(user.getId())) {
             post.removeLike(user.getId());
+            user.removeLike(post.getId());
         } else {
             post.addLike(user.getId());
+            user.addLike(post.getId());
         }
 
         postRepository.save(post);
-
-        user.addLike(post.getId());
         userService.updateUser(user, token);
 
         return ResponseEntity.ok().build();
