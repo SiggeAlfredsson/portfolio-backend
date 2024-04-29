@@ -138,6 +138,26 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
+        User user = jwtService.getUserFromToken(token);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
+        accessService.verifyUserAccessToPost(user, post); // owner and admin pass this
+
+        User owner = userService.getUserByUsername(post.getUsername());
+        owner.removePost(postId);
+
+        // stars, likes and comments? this was more complicated then anticipated
+        // for each like get user removeLike?
+        // for each comment get user removeComment?
+        // for each star get user removeStar?
+
+        postRepository.delete(post);
+        userService.updateUser(owner, token);
+
+        return ResponseEntity.ok().build();
+    }
+
 
     @PostMapping("/{postId}/comment")
     public ResponseEntity<?> addComment(@PathVariable("postId") Long postId, @RequestBody String commentText, @RequestHeader ("Authorization") String token) {
@@ -171,20 +191,6 @@ public class PostController {
 
         comment.setText(newCommentText);
         commentRepository.save(comment);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{postId}")
-    public ResponseEntity<?> deletePost(@PathVariable("postId") Long postId, @RequestHeader ("Authorization") String token) {
-        User user = jwtService.getUserFromToken(token);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
-        accessService.verifyUserAccessToPost(user, post); // owner and admin pass this
-
-        postRepository.delete(post);
-
-        user.removePost(post.getId());
-        userService.updateUser(user, token);
-
         return ResponseEntity.ok().build();
     }
 
