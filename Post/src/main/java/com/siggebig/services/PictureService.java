@@ -1,5 +1,6 @@
 package com.siggebig.services;
 
+import com.siggebig.models.Post;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 public class PictureService {
 
     private final RestTemplate restTemplate;
+    private final String basePictureUrl = "http://localhost:8091/api/pictures";
 
     public PictureService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -56,5 +58,21 @@ public class PictureService {
         // Return the response body
         return response.getBody();
     }
+
+
+    public void removePicture(Long id, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        String url = basePictureUrl + "/" + id;
+
+//        headers.set("Authorization", token);
+        HttpEntity<Post> request = new HttpEntity<>(headers);
+
+        ResponseEntity<?> response = restTemplate.exchange(url, HttpMethod.DELETE, request, Void.class);
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Failed to remove picture: " + response.getBody());
+        }
+    }
+
 }
 

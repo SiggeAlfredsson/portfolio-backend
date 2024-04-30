@@ -147,6 +147,11 @@ public class PostController {
 
         userService.removePostInteractionsFromUsers(post, token);
 
+        for (long id : post.getPicturesIds()) {
+            pictureService.removePicture(id, token);
+        }
+
+
         commentRepository.deleteAll(post.getComments());
 
         postRepository.delete(post);

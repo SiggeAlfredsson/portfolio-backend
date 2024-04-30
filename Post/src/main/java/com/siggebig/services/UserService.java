@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class UserService {
     public void removePostInteractionsFromUsers(Post post, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Post> request = new HttpEntity<>(post, headers);
 
         String url = userServiceUrl + "/remove-post-interactions";

@@ -49,6 +49,16 @@ public class PictureController {
 
     }
 
+
+    // i guess auth could be appropriate here
+    @DeleteMapping("/{pictureId}")
+    public ResponseEntity<?> deletePictureById(@PathVariable("pictureId") long pictureId) {
+        Picture picture = pictureRepository.findById(pictureId).orElseThrow(() -> new PictureNotFoundException("Picture not found with id: " + pictureId));
+
+        pictureRepository.delete(picture);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<byte[]> getUserPictureByUserId(@PathVariable("userId") long userId) {
         User user = userService.getUserByUserId(userId);

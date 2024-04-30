@@ -138,7 +138,7 @@ public class UserController {
         return ResponseEntity.ok().body(users);
     }
 
-    @DeleteMapping("/remove-post-intercations")
+    @DeleteMapping("/remove-post-interactions")
     public ResponseEntity<?> removePostInteractionsFromAllUsers(@RequestBody Post post, @RequestHeader("Authorization") String token) {
 
         User caller = jwtService.getUserFromToken(token);
