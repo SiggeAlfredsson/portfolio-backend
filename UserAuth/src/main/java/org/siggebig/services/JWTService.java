@@ -12,6 +12,8 @@ import org.siggebig.repositorys.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class JWTService {
 
@@ -59,6 +61,9 @@ public class JWTService {
 
         String username = getUsernameFromToken(token);
         User user = userRepository.findByUsername(username);
+
+        user.setLastSeen(LocalDateTime.now());
+        userRepository.save(user);
 
         if(user == null) {
             throw new UnauthorizedException("User not found from token");
