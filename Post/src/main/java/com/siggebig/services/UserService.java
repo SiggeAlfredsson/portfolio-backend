@@ -1,5 +1,6 @@
 package com.siggebig.services;
 
+import com.siggebig.models.Post;
 import com.siggebig.models.User;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -7,6 +8,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -41,6 +44,19 @@ public class UserService {
             return response.getBody();
         } else {
             throw new RuntimeException("Failed to update user");
+        }
+    }
+
+    public void removePostInteractionsFromUsers(Post post, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+        HttpEntity<Post> request = new HttpEntity<>(post, headers);
+
+        String url = userServiceUrl + "/remove-post-interactions";
+        ResponseEntity<?> response = restTemplate.exchange(url, HttpMethod.DELETE, request, Void.class);
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Failed to remove post interactions");
         }
     }
 

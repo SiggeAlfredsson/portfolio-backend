@@ -3,6 +3,8 @@ package org.siggebig.controllers;
 
 
 import org.siggebig.exceptions.UnauthorizedException;
+import org.siggebig.models.Comment;
+import org.siggebig.models.Post;
 import org.siggebig.models.User;
 import org.siggebig.exceptions.UserNotFoundException;
 import org.siggebig.repositorys.UserRepository;
@@ -136,5 +138,34 @@ public class UserController {
         return ResponseEntity.ok().body(users);
     }
 
+    @DeleteMapping("/remove-post-intercations")
+    public ResponseEntity<?> removePostInteractionsFromAllUsers(@RequestBody Post post, @RequestHeader("Authorization") String token) {
+
+        User caller = jwtService.getUserFromToken(token);
+        accessService.verifyUserAccessToPost(caller, post);
+
+        for (long id : post.getLikes()) {
+            User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Not found User with id = " + id));
+            user.removeLike(post.getId());
+            userRepository.save(user);
+        }
+
+        for (long id : post.getStars()) {
+            User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Not found User with id = " + id));
+            user.removeStar(post.getId());
+            userRepository.save(user);
+        }
+
+        for ( Comment comment : post.getComments()) {
+            User user = userRepository.findById(comment.getUserId()).orElseThrow(() -> new UserNotFoundException("Not found User with id = " + comment.getUserId()));
+            user.removeComment(comment.getId());
+            userRepository.save(user);
+        }
+
+        User owner = userRepository.findByUsername(post.getUsername());
+        owner.removePost(post.getId());
+        userRepository.save(owner);
+        return ResponseEntity.ok().build();
+    }
 
 }

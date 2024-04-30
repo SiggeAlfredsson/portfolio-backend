@@ -2,6 +2,7 @@ package org.siggebig.services;
 
 import org.hibernate.cfg.SchemaToolingSettings;
 import org.siggebig.exceptions.UnauthorizedException;
+import org.siggebig.models.Post;
 import org.siggebig.models.User;
 import org.siggebig.repositorys.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,13 @@ public class AccessService {
         if (!username.equals(user.getUsername()) && !user.isAdmin()) {
             throw new UnauthorizedException("Invalid Token");
         }
+    }
+
+    public void verifyUserAccessToPost(User user, Post post) {
+        if (!(post.getUsername().equals(user.getUsername())) && !user.isAdmin()) {
+            throw new UnauthorizedException("You do not have access to this post");
+        }
+        return;
     }
 
 }

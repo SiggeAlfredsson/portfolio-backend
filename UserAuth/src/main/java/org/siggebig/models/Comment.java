@@ -1,4 +1,4 @@
-package com.siggebig.models;
+package org.siggebig.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;

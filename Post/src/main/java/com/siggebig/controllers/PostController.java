@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -144,18 +145,11 @@ public class PostController {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post not found"));
         accessService.verifyUserAccessToPost(user, post); // owner and admin pass this
 
-        User owner = userService.getUserByUsername(post.getUsername());
-        owner.removePost(postId);
+        userService.removePostInteractionsFromUsers(post, token);
 
-        // stars, likes and comments? this was more complicated then anticipated
-        // for each like get user removeLike?
-        // for each comment get user removeComment?
-        // for each star get user removeStar?
-
-        post.getComments().forEach(comment -> commentRepository.delete(comment)); // should i do like this and i do a helper class that does all logic for each star like and comment
+        commentRepository.deleteAll(post.getComments());
 
         postRepository.delete(post);
-        userService.updateUser(owner, token);
 
         return ResponseEntity.ok().build();
     }
