@@ -16,8 +16,6 @@ public class Comment {
 
     private LocalDateTime createdAt;
 
-    private String username; // userId?
-
     private Long userId;
 
 

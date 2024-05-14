@@ -28,7 +28,7 @@ public class AccessService {
     }
 
     public void verifyUserAccessToPost(User user, Post post) {
-        if (!(post.getUsername().equals(user.getUsername())) && !user.isAdmin()) {
+        if (!(post.getUserId().equals(user.getId())) && !user.isAdmin()) {
             throw new UnauthorizedException("You do not have access to this post");
         }
         return;
