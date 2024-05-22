@@ -16,7 +16,7 @@ public class Comment {
 
     private LocalDateTime createdAt;
 
-    private String username; // userId?
+    private String username; // the username needs to be fetched from the userid if a user changes username
 
     private Long userId;
 

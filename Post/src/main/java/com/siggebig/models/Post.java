@@ -23,7 +23,7 @@ public class Post {
     private LocalDateTime createdAt;
     private boolean isPrivate;
 
-    private String username; // userId?
+    private Long userId;
 
     @ElementCollection
     @Column(name = "picturesIds")

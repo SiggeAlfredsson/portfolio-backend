@@ -44,7 +44,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-
     @GetMapping("username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
         User user = userRepository.findByUsername(username);
@@ -162,7 +161,7 @@ public class UserController {
             userRepository.save(user);
         }
 
-        User owner = userRepository.findByUsername(post.getUsername());
+        User owner = userRepository.findById(post.getUserId()).orElseThrow(() -> new UserNotFoundException("Not found User with id = " + post.getUserId()));
         owner.removePost(post.getId());
         userRepository.save(owner);
         return ResponseEntity.ok().build();

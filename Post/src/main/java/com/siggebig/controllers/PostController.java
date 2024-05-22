@@ -80,13 +80,13 @@ public class PostController {
         return ResponseEntity.ok().body(post);
     }
 
-    @GetMapping("/user/{username}")
-    public ResponseEntity<?> getPostsByUsername(@PathVariable("username") String username, @RequestHeader(value = "Authorization", required = false) String token) {
-        List<Post> posts = postRepository.findByUsername(username);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getPostsByUsername(@PathVariable("userId") long userId, @RequestHeader(value = "Authorization", required = false) String token) {
+        List<Post> posts = postRepository.findByUserId(userId);
 
         if (!(token == null)) {
             User jwtUser = jwtService.getUserFromToken(token);
-            if (jwtUser.isAdmin() || jwtUser.getUsername().equals(username)) {
+            if (jwtUser.isAdmin() || jwtUser.getId().equals(userId)) {
                 return ResponseEntity.ok().body(posts);
             }
         }
@@ -102,7 +102,7 @@ public class PostController {
         User user = jwtService.getUserFromToken(token);
         Post newPost = new Post();
         newPost.setCreatedAt(LocalDateTime.now());
-        newPost.setUsername(user.getUsername());
+        newPost.setUserId(user.getId());
         newPost.setTitle(post.getTitle());
         newPost.setDescription(post.getDescription());
         newPost.setPrivate(post.isPrivate());
