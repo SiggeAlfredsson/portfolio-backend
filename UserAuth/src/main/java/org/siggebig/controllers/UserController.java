@@ -58,19 +58,10 @@ public class UserController {
 
         accessService.verifyUserToken(_user, token);
 
-        //now user can only update picture and username ---- password should have its own call i think+
-
-        _user.setUsername(user.getUsername());
-        _user.setPictureId(user.getPictureId());
-
-        // do it like this?
-        _user.setPostsIds(user.getPostsIds());
-        _user.setCommentsIds(user.getCommentsIds());
-        _user.setLikedPostsIds(user.getLikedPostsIds());
-        _user.setStarredPostsIds(user.getStarredPostsIds());
+        _user.setUsername(user.getUsername()); // username iis unique so this will fail if its already taken
+        _user.setDescription(user.getDescription());
 
         userRepository.save(_user);
-
         return new ResponseEntity<>(_user, HttpStatus.OK);
     }
 
