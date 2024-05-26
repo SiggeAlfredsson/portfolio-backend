@@ -19,16 +19,24 @@ public class UserAuthApplication {
     public CommandLineRunner run(PasswordEncoder passwordEncoder, UserRepository userRepository) {
         return args -> {
             // Check if there are already 20 users, if not, create them
-            if (userRepository.count() < 20) {
+            if (userRepository.count() < 21) {
                 for (int i = 1; i <= 20; i++) {
                     User user = new User();
-                    user.setUsername("user" + i); // Unique username for each user
+                    user.setUsername("user" + i);
                     user.setPassword(passwordEncoder.encode("password")); // Encode the password
                     user.setDescription("Very friendly user");
-                    user.setRegisteredAt(LocalDateTime.now()); // Set this to current date and time
-                    user.setLastSeen(LocalDateTime.now()); // Set this to current date and time as well
-                    userRepository.save(user); // Save the user to the repository
+                    user.setRegisteredAt(LocalDateTime.now());
+                    user.setLastSeen(LocalDateTime.now());
+                    userRepository.save(user);
                 }
+                User admin = new User();
+                admin.setUsername("admin");
+                admin.setPassword(passwordEncoder.encode("password")); // Encode the password
+                admin.setDescription("Very friendly admin");
+                admin.setAdmin(true);
+                admin.setRegisteredAt(LocalDateTime.now());
+                admin.setLastSeen(LocalDateTime.now());
+                userRepository.save(admin);
             }
             System.out.println("-------Initialized database with 20 users-------");
         };

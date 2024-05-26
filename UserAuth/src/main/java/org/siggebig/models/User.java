@@ -30,6 +30,8 @@ public class User {
     private LocalDateTime lastSeen;
 
 
+
+
     @ElementCollection
     @Column(name = "followersIds")
     private List<Long> followersIds = new ArrayList<>();

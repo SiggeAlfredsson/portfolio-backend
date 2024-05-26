@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,10 @@ public class User {
 
     private Long pictureId;
 
+    private String description;
+
+    private LocalDateTime registeredAt;
+    private LocalDateTime lastSeen;
 
     @ElementCollection
     @Column(name = "followersIds")
