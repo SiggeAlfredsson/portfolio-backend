@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -52,17 +54,26 @@ public class UserController {
 
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable("userId") long userId, @RequestBody User user, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> updateUser(@PathVariable("userId") long userId, @RequestBody User user, @RequestHeader("Authorization") String token) {
         User _user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Not found User with id = " + userId));
 
         accessService.verifyUserToken(_user, token);
+        User apiCaller = jwtService.getUserFromToken(token);
 
         _user.setUsername(user.getUsername()); // username iis unique so this will fail if its already taken
         _user.setDescription(user.getDescription());
 
         userRepository.save(_user);
-        return new ResponseEntity<>(_user, HttpStatus.OK);
+        if (apiCaller.equals(_user)) {
+            String newToken = jwtService.getNewTokenFromUsername(_user.getUsername());
+            Map<String, Object> response = new HashMap<>();
+            response.put("user", _user);
+            response.put("token", newToken);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(_user, HttpStatus.OK);
+        }
     }
 
     @PostMapping("/follow/{followId}")

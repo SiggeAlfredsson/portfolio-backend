@@ -37,6 +37,12 @@ public class JWTService {
 
     }
 
+    public String getNewTokenFromUsername(String username) { // only called when a username is updated , not sure if im happy with the implementation of this
+        return JWT.create()
+                .withClaim("username", username)
+                .sign(Algorithm.HMAC256("hellofriend"));
+    }
+
     public String getUsernameFromToken(String token) {
 
         // remove the "Bearer " prefix if it exists in the token
