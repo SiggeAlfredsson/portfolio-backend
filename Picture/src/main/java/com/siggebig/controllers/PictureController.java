@@ -81,8 +81,10 @@ public class PictureController {
         return new ResponseEntity<>(picture.getData(), headers, HttpStatus.OK);
     }
 
+
+
     @PostMapping("/user/{userId}")
-    public ResponseEntity<?> uploadUserPicture(
+    public ResponseEntity<?> uploadUserPicture( // i could have this return the pictureid also and add it in the other update user post but for now this is good
             @PathVariable("userId") long userId,
             @RequestParam("file") MultipartFile file,
             @RequestHeader("Authorization") String token
@@ -96,9 +98,11 @@ public class PictureController {
             Picture picture = new Picture();
             picture.setData(file.getBytes());
             Picture savedPic = pictureRepository.save(picture);
+            System.out.println("id: " + savedPic.getId());
             user.setPictureId(savedPic.getId());
 
             userService.updateUser(user, token);
+            System.out.println("SAVED NEW PICCCCC");
 
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -108,6 +112,7 @@ public class PictureController {
 
 
         picture.setData(file.getBytes());
+        System.out.println("WRITE OVER OLD PICCCCC");
         pictureRepository.save(picture);
 
         return new ResponseEntity<>(HttpStatus.OK);

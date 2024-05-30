@@ -63,6 +63,7 @@ public class UserController {
 
         _user.setUsername(user.getUsername()); // username iis unique so this will fail if its already taken
         _user.setDescription(user.getDescription());
+        _user.setPictureId(user.getPictureId());
 
         userRepository.save(_user);
         if (apiCaller.equals(_user)) {
