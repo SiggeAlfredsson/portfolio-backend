@@ -20,9 +20,9 @@ public class AccessService {
     private JWTService jwtService;
 
     public void verifyUserToken(User user, String token) {
-        String username = jwtService.getUsernameFromToken(token);
+        User tokenUser = jwtService.getUserFromToken(token);
 
-        if (!username.equals(user.getUsername()) && !user.isAdmin()) {
+        if (!tokenUser.getUsername().equals(user.getUsername()) && !tokenUser.isAdmin()) {
             throw new UnauthorizedException("Invalid Token");
         }
     }
