@@ -32,6 +32,12 @@ public class UserService {
         return restTemplate.getForObject(url, User.class);
     }
 
+    // this is scabby, do not like this , will work for now
+    public User getUserByUsername(String username) {
+        String url = "http://localhost:8090/api/users/username/" + username;
+        return restTemplate.getForObject(url, User.class);
+    }
+
     public User updateUser(User user, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
